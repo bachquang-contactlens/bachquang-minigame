@@ -1,147 +1,452 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2299.77">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bach Quang MiniGame</title>
+<style>
+  :root { --green:#00A651; --green-dark:#008a43; --green-light:#e6f7ee; --text:#1f2937; }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background: linear-gradient(180deg,#ffffff 0%,var(--green-light) 100%);
+    color:var(--text); min-height:100vh; display:flex; justify-content:center; padding:20px 16px;
+  }
+  .card {
+    background:#fff; border-radius:20px; padding:28px 22px; width:100%; max-width:440px;
+    box-shadow:0 10px 30px rgba(0,166,81,.12); text-align:center;
+  }
+  header { margin-bottom:6px; }
+  header img { height:70px; max-width:85%; object-fit:contain; }
+  .brand-fallback { display:none; font-weight:800; color:var(--green); font-size:22px; }
+  h1 { color:var(--green); font-size:26px; margin:0 0 8px; }
+  .sub { color:#4b5563; font-size:15px; margin:36px 0 20px; line-height:1.5; }
+
+  .screen { display:none; text-align:left; }
+  .screen.active { display:block; }
+  .screen.center { text-align:center; }
+  label.field-label { display:block; font-weight:700; margin:14px 0 6px; font-size:15px; }
+  label.field-label span { color:#dc2626; }
+  input[type=text], input[type=tel] {
+    width:100%; padding:12px 14px; border:1px solid #d1d5db; border-radius:10px;
+    font-size:16px; background:#fafafa;
+  }
+  input:focus { outline:none; border-color:var(--green); background:#fff; }
+  fieldset { border:1px solid #d1fae5; border-radius:12px; padding:12px 14px; margin:14px 0; }
+  legend { font-weight:700; padding:0 6px; color:var(--green-dark); }
+  .opt { display:flex; align-items:center; gap:10px; padding:8px 4px; font-size:15px; }
+  .opt input { width:18px; height:18px; accent-color:var(--green); }
+  .q-block { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; margin-bottom:14px; }
+  .q-block h3 { font-size:15px; margin:0 0 10px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; }
+  .other-input { margin-top:8px; }
+  .err { color:#dc2626; font-size:14px; margin:10px 0; min-height:18px; text-align:center; }
+
+  .btn {
+    display:block; width:100%; margin-top:16px; padding:14px; border:none; border-radius:999px;
+    background:var(--green); color:#fff; font-size:17px; font-weight:700; cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,166,81,.3);
+  }
+  .btn:hover:not(:disabled) { background:var(--green-dark); }
+  .btn:disabled { background:#9ca3af; box-shadow:none; cursor:not-allowed; }
+  .btn-back { background:var(--green-dark); color:#fff; box-shadow:none; font-size:15px; margin-top:12px; }
+
+  .wheel-wrap { position:relative; width:min(88vw,340px); aspect-ratio:1; margin:16px auto 0; }
+  canvas { width:100%; height:100%; border-radius:50%; box-shadow:0 12px 30px rgba(0,166,81,.25); }
+  .pointer {
+    position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent;
+    border-top:28px solid var(--green-dark); z-index:2;
+  }
+  .btn-spin { max-width:320px; margin-left:auto; margin-right:auto; }
+
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; padding:16px; }
+  .modal.show { display:flex; }
+  .modal-card { background:#fff; border-radius:20px; padding:28px 24px; text-align:center; max-width:340px; width:100%; border-top:6px solid var(--green); }
+  .modal-card h2 { color:var(--green); margin:0 0 8px; }
+  .modal-card .prize { font-size:22px; font-weight:700; margin:8px 0 16px; }
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="vi"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</p>
-<p class="p1">&lt;title&gt;Bach Quang MiniGame&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>:root { --green:#00A651; --green-dark:#008a43; --green-light:#e6f7ee; --text:#1f2937; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>* { box-sizing: border-box; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin:0; font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: linear-gradient(180deg,#ffffff 0%,var(--green-light) 100%);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color:var(--text); min-height:100vh; display:flex; justify-content:center; padding:20px 16px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.card {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:#fff; border-radius:20px; padding:28px 22px; width:100%; max-width:440px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>box-shadow:0 10px 30px rgba(0,166,81,.12); text-align:center;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>header img { height:70px; max-width:85%; object-fit:contain; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.brand-fallback { display:none; font-weight:800; color:var(--green); font-size:22px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.step-label { font-size:12px; letter-spacing:2px; color:#6b7280; margin:14px 0 4px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>h1 { color:var(--green); font-size:26px; margin:6px 0 4px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sub { color:#4b5563; font-size:15px; margin:0 0 18px; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.screen { display:none; text-align:left; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.screen.active { display:block; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>label.field-label { display:block; font-weight:700; margin:14px 0 6px; font-size:15px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>label.field-label span { color:#dc2626; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>input[type=text], input[type=tel] {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width:100%; padding:12px 14px; border:1px solid #d1d5db; border-radius:10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size:16px; background:#fafafa;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>input:focus { outline:none; border-color:var(--green); background:#fff; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>fieldset { border:1px solid #d1fae5; border-radius:12px; padding:12px 14px; margin:14px 0; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>legend { font-weight:700; padding:0 6px; color:var(--green-dark); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.opt { display:flex; align-items:center; gap:10px; padding:8px 4px; font-size:15px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.opt input { width:18px; height:18px; accent-color:var(--green); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.q-block { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; margin-bottom:14px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.q-block h3 { font-size:15px; margin:0 0 10px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.other-input { margin-top:8px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.err { color:#dc2626; font-size:14px; margin:10px 0; min-height:18px; text-align:center; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display:block; width:100%; margin-top:16px; padding:14px; border:none; border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:var(--green); color:#fff; font-size:17px; font-weight:700; cursor:pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>box-shadow:0 6px 16px rgba(0,166,81,.3);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn:hover:not(:disabled) { background:var(--green-dark); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn:disabled { background:#9ca3af; box-shadow:none; cursor:not-allowed; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn-back { background:none; color:#6b7280; box-shadow:none; font-size:14px; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.wheel-wrap { position:relative; width:min(88vw,340px); aspect-ratio:1; margin:12px auto 0; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>canvas { width:100%; height:100%; border-radius:50%; box-shadow:0 12px 30px rgba(0,166,81,.25); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.pointer {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>position:absolute; top:-12px; left:50%; transform:translateX(-50%);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-top:28px solid var(--green-dark); z-index:2;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.btn-spin { max-width:320px; margin-left:auto; margin-right:auto; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.note { font-size:13px; color:#6b7280; text-align:center; margin-top:14px; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; padding:16px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.modal.show { display:flex; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.modal-card { background:#fff; border-radius:20px; padding:28px 24px; text-align:center; max-width:340px; width:100%; border-top:6px solid var(--green); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.modal-card h2 { color:var(--green); margin:0 0 8px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.modal-card .prize { font-size:22px; font-weight:700; margin:8px 0 16px; }</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;img src="logo-bachquang.png" alt="Bach Quang"</p>
-<p class="p1"><span class="Apple-converted-space">         </span>onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="brand-fallback"&gt;Bach Quang Co., Ltd&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="step-label" id="stepLabel"&gt;BƯỚC 01 / 03&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- BƯỚC 1: THÔNG TIN --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;section class="screen active" id="step1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Bach Quang MiniGame&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="sub"&gt;Quý Bác Sĩ vui lòng điền thông tin để bắt đầu tham gia chương trình.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;label class="field-label"&gt;Họ và tên &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="text" id="fullname" placeholder="Nhập họ và tên"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;label class="field-label"&gt;Số điện thoại &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="tel" id="phone" placeholder="Nhập số điện thoại"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;label class="field-label"&gt;Bệnh viện / Phòng khám &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="text" id="clinic" placeholder="Nhập tên bệnh viện / phòng khám"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;fieldset&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;legend&gt;Chuyên khoa *&lt;/legend&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Phaco"&gt; Phaco&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Glaucoma"&gt; Glaucoma&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Võng mạc"&gt; Võng mạc&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Giác mạc"&gt; Giác mạc&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Khác"&gt; Khác&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" id="specialtyOther" class="other-input" placeholder="Chuyên khoa khác (nếu có)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/fieldset&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="err" id="err1"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" onclick="goStep2()"&gt;TIẾP THEO →&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- BƯỚC 2: KHẢO SÁT --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;section class="screen" id="step2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Bach Quang MiniGame&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="sub"&gt;Kính mời Quý Bác Sĩ / Quý Bệnh Viện chọn các nội dung phù hợp. Có thể chọn nhiều đáp án trong mỗi câu.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="q-block"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;1a. Quý Bác Sĩ / Quý Bệnh Viện quan tâm đến dòng thủy tinh thể nhân tạo nào? — Loại thấu kính *&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid2" data-q="q1a"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Đơn tiêu"&gt; Đơn tiêu&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="EDOF (Kéo dài tiêu cự)"&gt; EDOF (Kéo dài tiêu cự)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Đa tiêu"&gt; Đa tiêu&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Ba tiêu cự"&gt; Ba tiêu cự&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" class="other-input" data-other="q1a" placeholder="Nhu cầu / nội dung khác (nếu có)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="q-block"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;1b. Chất liệu *&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid2" data-q="q1b"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Kỵ nước"&gt; Kỵ nước&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Ngậm nước"&gt; Ngậm nước&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Kỵ nước kết hợp ngậm nước"&gt; Kỵ nước kết hợp ngậm nước&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="IOL 3 mảnh"&gt; IOL 3 mảnh&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" class="other-input" data-other="q1b"</p>
+<div class="card">
+  <header>
+    <img src="logo-bachquang.png" alt="Bach Quang"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <div class="brand-fallback">Bach Quang Co., Ltd</div>
+  </header>
+
+  <!-- BƯỚC 1: THÔNG TIN -->
+  <section class="screen active" id="step1">
+    <p class="sub" style="text-align:center;">Quý Bác Sĩ vui lòng điền thông tin để bắt đầu tham gia chương trình.</p>
+
+    <label class="field-label">Họ và tên <span>*</span></label>
+    <input type="text" id="fullname" placeholder="Nhập họ và tên">
+
+    <label class="field-label">Số điện thoại <span>*</span></label>
+    <input type="tel" id="phone" placeholder="Nhập số điện thoại (bắt đầu bằng 0)">
+
+    <label class="field-label">Bệnh viện / Phòng khám <span>*</span></label>
+    <input type="text" id="clinic" placeholder="Nhập tên bệnh viện / phòng khám">
+
+    <fieldset>
+      <legend>Chuyên khoa *</legend>
+      <label class="opt"><input type="checkbox" name="specialty" value="Phaco"> Phaco</label>
+      <label class="opt"><input type="checkbox" name="specialty" value="Glaucoma"> Glaucoma</label>
+      <label class="opt"><input type="checkbox" name="specialty" value="Võng mạc"> Võng mạc</label>
+      <label class="opt"><input type="checkbox" name="specialty" value="Giác mạc"> Giác mạc</label>
+      <label class="opt"><input type="checkbox" name="specialty" value="Khác"> Khác</label>
+      <input type="text" id="specialtyOther" class="other-input" placeholder="Chuyên khoa khác (nếu có)">
+    </fieldset>
+
+    <div class="err" id="err1"></div>
+    <button class="btn" onclick="goStep2()">TIẾP THEO →</button>
+  </section>
+
+  <!-- BƯỚC 2: KHẢO SÁT -->
+  <section class="screen" id="step2">
+    <p class="sub" style="text-align:center;">Kính mời Quý Bác Sĩ / Quý Bệnh Viện chọn các nội dung phù hợp. Có thể chọn nhiều đáp án trong mỗi câu.</p>
+
+    <div class="q-block">
+      <h3>1a. Quý Bác Sĩ / Quý Bệnh Viện quan tâm đến dòng thủy tinh thể nhân tạo nào? — Loại thấu kính *</h3>
+      <div class="grid2" data-q="q1a">
+        <label class="opt"><input type="checkbox" value="Đơn tiêu"> Đơn tiêu</label>
+        <label class="opt"><input type="checkbox" value="EDOF (Kéo dài tiêu cự)"> EDOF (Kéo dài tiêu cự)</label>
+        <label class="opt"><input type="checkbox" value="Đa tiêu"> Đa tiêu</label>
+        <label class="opt"><input type="checkbox" value="Ba tiêu cự"> Ba tiêu cự</label>
+      </div>
+      <input type="text" class="other-input" data-other="q1a" placeholder="Nhu cầu / nội dung khác (nếu có)">
+    </div>
+
+    <div class="q-block">
+      <h3>1b. Chất liệu *</h3>
+      <div class="grid2" data-q="q1b">
+        <label class="opt"><input type="checkbox" value="Kỵ nước"> Kỵ nước</label>
+        <label class="opt"><input type="checkbox" value="Ngậm nước"> Ngậm nước</label>
+        <label class="opt"><input type="checkbox" value="Kỵ nước kết hợp ngậm nước"> Kỵ nước kết hợp ngậm nước</label>
+        <label class="opt"><input type="checkbox" value="IOL 3 mảnh"> IOL 3 mảnh</label>
+      </div>
+      <input type="text" class="other-input" data-other="q1b" placeholder="Nhu cầu / nội dung khác (nếu có)">
+    </div>
+
+    <div class="q-block">
+      <h3>2. Đối với vật tư nhãn khoa, Quý Bác Sĩ / Quý Bệnh Viện có kế hoạch đầu tư sản phẩm nào trong thời gian tới không? *</h3>
+      <div class="grid2" data-q="q2">
+        <label class="opt"><input type="checkbox" value="IOL"> IOL</label>
+        <label class="opt"><input type="checkbox" value="Chất nhầy nhãn khoa"> Chất nhầy nhãn khoa</label>
+        <label class="opt"><input type="checkbox" value="Dao"> Dao</label>
+        <label class="opt"><input type="checkbox" value="Dụng cụ nhãn khoa"> Dụng cụ nhãn khoa</label>
+        <label class="opt"><input type="checkbox" value="Bộ dụng cụ nhãn khoa"> Bộ dụng cụ nhãn khoa</label>
+        <label class="opt"><input type="checkbox" value="Chưa có kế hoạch"> Chưa có kế hoạch</label>
+      </div>
+      <input type="text" class="other-input" data-other="q2" placeholder="Nhu cầu / nội dung khác (nếu có)">
+    </div>
+
+    <div class="q-block">
+      <h3>3. Đối với thiết bị nhãn khoa, Quý Bác Sĩ / Quý Bệnh Viện có kế hoạch đầu tư thiết bị nào trong thời gian tới không? *</h3>
+      <div class="grid2" data-q="q3">
+        <label class="opt"><input type="checkbox" value="Máy Phaco"> Máy Phaco</label>
+        <label class="opt"><input type="checkbox" value="Máy OCT"> Máy OCT</label>
+        <label class="opt"><input type="checkbox" value="Máy chụp đáy mắt"> Máy chụp đáy mắt</label>
+        <label class="opt"><input type="checkbox" value="Máy Điều trị Laser"> Máy Điều trị Laser</label>
+        <label class="opt"><input type="checkbox" value="Máy đo nhãn áp"> Máy đo nhãn áp</label>
+        <label class="opt"><input type="checkbox" value="Máy siêu âm"> Máy siêu âm</label>
+        <label class="opt"><input type="checkbox" value="Chưa có kế hoạch"> Chưa có kế hoạch</label>
+      </div>
+      <input type="text" class="other-input" data-other="q3" placeholder="Nhu cầu / nội dung khác (nếu có)">
+    </div>
+
+    <div class="q-block">
+      <h3>4. Công ty Bách Quang cung cấp một số thiết bị thanh lý cũ/mới với chất lượng cao và giá thành hợp lý. Quý Bác sĩ có nhu cầu với thiết bị nào? *</h3>
+      <div class="grid2" data-q="q4">
+        <label class="opt"><input type="checkbox" value="Máy đo nhãn áp hơi không tiếp xúc Tonovue, xuất xứ Đài Loan"> Máy đo nhãn áp hơi không tiếp xúc Tonovue, xuất xứ Đài Loan</label>
+        <label class="opt"><input type="checkbox" value="Máy chụp đáy mắt màu Crytalvue, xuất xứ Đài Loan"> Máy chụp đáy mắt màu Crytalvue, xuất xứ Đài Loan</label>
+        <label class="opt"><input type="checkbox" value="Siêu âm mắt 4 Sight, hãng Keeler, xuất xứ Anh"> Siêu âm mắt 4 Sight, hãng Keeler, xuất xứ Anh</label>
+        <label class="opt"><input type="checkbox" value="Đèn khe khám mắt slitlamp, hãng Keeler, xuất xứ Anh"> Đèn khe khám mắt slitlamp, hãng Keeler, xuất xứ Anh</label>
+        <label class="opt"><input type="checkbox" value="Máy Laser YAG Qlas, hãng A.R.C Laser, xuất xứ Đức"> Máy Laser YAG Qlas, hãng A.R.C Laser, xuất xứ Đức</label>
+        <label class="opt"><input type="checkbox" value="Máy laser Diode Fox III, A.R.C Laser, xuất xứ Đức"> Máy laser Diode Fox III, A.R.C Laser, xuất xứ Đức</label>
+        <label class="opt"><input type="checkbox" value="Không có nhu cầu"> Không có nhu cầu</label>
+      </div>
+      <input type="text" class="other-input" data-other="q4" placeholder="Nhu cầu / nội dung khác (nếu có)">
+    </div>
+
+    <div class="q-block">
+      <h3>5a. Quý Bác Sĩ / Quý Bệnh Viện có quan tâm hoặc có nhu cầu tìm hiểu và ứng dụng công nghệ iStent dẫn lưu vùng bè trong điều trị Glaucoma ít xâm lấn (MIGS) không? *</h3>
+      <div class="grid2" data-q="q5a">
+        <label class="opt"><input type="checkbox" value="Có nhu cầu tìm hiểu"> Có nhu cầu tìm hiểu</label>
+        <label class="opt"><input type="checkbox" value="Có nhu cầu làm nghiên cứu"> Có nhu cầu làm nghiên cứu</label>
+        <label class="opt"><input type="checkbox" value="Có nhu cầu sử dụng tại bệnh viện"> Có nhu cầu sử dụng tại bệnh viện</label>
+        <label class="opt"><input type="checkbox" value="Chưa có nhu cầu"> Chưa có nhu cầu</label>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h3>5b. Bệnh viện có số lượng bệnh nhân Glaucoma góc mở phù hợp để cân nhắc ứng dụng công nghệ iStent (MIGS) không? *</h3>
+      <div class="grid2" data-q="q5b">
+        <label class="opt"><input type="checkbox" value="Dưới 5 ca/tháng"> Dưới 5 ca/tháng</label>
+        <label class="opt"><input type="checkbox" value="5–10 ca/tháng"> 5–10 ca/tháng</label>
+        <label class="opt"><input type="checkbox" value="10–20 ca/tháng"> 10–20 ca/tháng</label>
+        <label class="opt"><input type="checkbox" value="Trên 20 ca/tháng"> Trên 20 ca/tháng</label>
+      </div>
+      <input type="text" class="other-input" data-other="q5b" placeholder="Nhu cầu / nội dung khác (nếu có)">
+    </div>
+
+    <div class="err" id="err2"></div>
+    <button class="btn" onclick="goStep3()">LƯU & TIẾP TỤC →</button>
+    <button class="btn btn-back" onclick="showStep(1)">← Quay lại</button>
+  </section>
+
+  <!-- BƯỚC 3: VÒNG QUAY -->
+  <section class="screen center" id="step3">
+    <h1>Vòng Quay May Mắn</h1>
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <canvas id="wheel" width="700" height="700"></canvas>
+    </div>
+    <button class="btn btn-spin" id="spin" onclick="spin()">QUAY NGAY ✦</button>
+    <div class="err" id="err3"></div>
+  </section>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <h2>Chúc mừng!</h2>
+    <p>Quý Bác Sĩ nhận được</p>
+    <div class="prize" id="prizeText"></div>
+    <button class="btn" onclick="closeModal()">Đóng</button>
+  </div>
+</div>
+
+<script>
+// ===== CẤU HÌNH =====
+// URL Apps Script (phải khớp với code và đã triển khai phiên bản mới nhất)
+const API_URL = "https://script.google.com/macros/s/AKfycbw1zeUZSz4b3wH37p2p6o6cpqT7aecJtQ8BiA7uRmDJEizAOWcS3Fakvj4avUugMpWwZw/exec";
+const LOCAL_KEY = "bq_spun_";  // đánh dấu trên thiết bị, lớp chặn phụ (server vẫn là chốt chính)
+
+// 8 ô: xen kẽ túi và bình. Tên phải khớp PRIZES trong Apps Script.
+const PRIZES = [
+  { name: "Túi quà Bách Quang",  icon: "bag" },
+  { name: "Bình nước Bách Quang", icon: "bottle" },
+  { name: "Túi quà Bách Quang",  icon: "bag" },
+  { name: "Bình nước Bách Quang", icon: "bottle" },
+  { name: "Túi quà Bách Quang",  icon: "bag" },
+  { name: "Bình nước Bách Quang", icon: "bottle" },
+  { name: "Túi quà Bách Quang",  icon: "bag" },
+  { name: "Bình nước Bách Quang", icon: "bottle" },
+];
+const GREEN = "#00A651";
+const WHITE = "#ffffff";
+const N = PRIZES.length;
+const SEG = (2 * Math.PI) / N;
+
+let userData = {};
+let spinning = false;
+let hasSpun = false;
+
+// ===== ĐIỀU HƯỚNG =====
+function showStep(n) {
+  ["step1","step2","step3"].forEach((id, i) =>
+    document.getElementById(id).classList.toggle("active", i === n - 1));
+  window.scrollTo(0, 0);
+}
+
+// Chuẩn hóa SĐT: chỉ giữ số, đổi đầu 84 thành 0
+function normPhone(raw) {
+  let p = String(raw || "").replace(/\D/g, "");
+  if (p.startsWith("84") && p.length >= 11) p = "0" + p.slice(2);
+  return p;
+}
+
+function goStep2() {
+  const name = document.getElementById("fullname").value.trim();
+  const phone = normPhone(document.getElementById("phone").value);
+  const clinic = document.getElementById("clinic").value.trim();
+  const specs = [...document.querySelectorAll('input[name="specialty"]:checked')].map(c => c.value);
+  const other = document.getElementById("specialtyOther").value.trim();
+  const err = document.getElementById("err1");
+
+  if (!name || !phone || !clinic) { err.textContent = "Vui lòng nhập đầy đủ các mục có dấu *."; return; }
+  if (!/^0\d{8,10}$/.test(phone)) { err.textContent = "Số điện thoại phải bắt đầu bằng 0, gồm 9 đến 11 số."; return; }
+  if (specs.length === 0 && !other) { err.textContent = "Vui lòng chọn ít nhất một chuyên khoa."; return; }
+  err.textContent = "";
+
+  userData = { name, phone, clinic, specialty: specs.join(", "), specialtyOther: other };
+  showStep(2);
+}
+
+function collectSurvey() {
+  const result = {};
+  document.querySelectorAll("[data-q]").forEach(group => {
+    result[group.dataset.q] = [...group.querySelectorAll("input:checked")].map(c => c.value).join(", ");
+  });
+  document.querySelectorAll("[data-other]").forEach(input => {
+    result[input.dataset.other + "_khac"] = input.value.trim();
+  });
+  return result;
+}
+
+function goStep3() {
+  const err = document.getElementById("err2");
+  const survey = collectSurvey();
+  const required = ["q1a","q1b","q2","q3","q4","q5a","q5b"];
+  if (required.some(k => !survey[k])) { err.textContent = "Vui lòng trả lời đầy đủ các câu hỏi có dấu *."; return; }
+  err.textContent = "";
+  userData = { ...userData, ...survey };
+  showStep(3);
+  drawWheel();
+}
+
+// ===== VẼ VÒNG QUAY =====
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const CX = canvas.width / 2, CY = canvas.height / 2, R = CX - 6;
+let currentAngle = 0;
+
+function rr(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// Icon túi quà: vẽ quanh gốc (0,0), không xoay
+function drawBag(s, color) {
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = s * 0.08;
+  ctx.beginPath();
+  ctx.arc(0, -s * 0.28, s * 0.22, Math.PI, 0);
+  ctx.stroke();
+  rr(-s * 0.42, -s * 0.18, s * 0.84, s * 0.8, s * 0.1);
+  ctx.fill();
+}
+
+// Icon bình nước: vẽ quanh gốc (0,0), không xoay
+function drawBottle(s, color) {
+  ctx.fillStyle = color;
+  rr(-s * 0.15, -s * 0.46, s * 0.3, s * 0.14, s * 0.04); // nắp
+  ctx.fill();
+  rr(-s * 0.28, -s * 0.34, s * 0.56, s * 0.2, s * 0.06); // cổ
+  ctx.fill();
+  rr(-s * 0.36, -s * 0.16, s * 0.72, s * 0.8, s * 0.18);  // thân
+  ctx.fill();
+}
+
+function drawWheel() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < N; i++) {
+    const start = currentAngle + i * SEG;
+    const end = start + SEG;
+    const isGreen = i % 2 === 0;
+
+    // Ô
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.arc(CX, CY, R, start, end);
+    ctx.closePath();
+    ctx.fillStyle = isGreen ? GREEN : WHITE;
+    ctx.fill();
+    ctx.strokeStyle = GREEN;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Icon (đặt ở giữa ô, không xoay theo vòng quay)
+    const mid = start + SEG / 2;
+    const ix = CX + Math.cos(mid) * R * 0.6;
+    const iy = CY + Math.sin(mid) * R * 0.6;
+    ctx.save();
+    ctx.translate(ix, iy);
+    const iconColor = isGreen ? WHITE : GREEN;
+    if (PRIZES[i].icon === "bag") drawBag(105, iconColor);
+    else drawBottle(105, iconColor);
+    ctx.restore();
+  }
+}
+
+// ===== QUAY =====
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+async function spin() {
+  if (spinning || hasSpun) return;
+  const err = document.getElementById("err3");
+  const btn = document.getElementById("spin");
+  err.textContent = "";
+
+  const phone = userData.phone;
+  // Lớp chặn trên thiết bị (tránh gửi lại khi tải lại trang)
+  if (localStorage.getItem(LOCAL_KEY + phone)) {
+    err.textContent = "Số điện thoại này chỉ được tham gia 1 lần.";
+    btn.disabled = true;
+    return;
+  }
+
+  spinning = true;
+  btn.disabled = true;
+
+  // Server kiểm tra trùng SĐT, chọn quà và ghi vào Sheet trong một bước
+  let result;
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        action: "spin",
+        ...userData,
+        time: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }),
+      }),
+    });
+    try {
+      result = await res.json();
+    } catch (parseErr) {
+      throw new Error("Máy chủ chưa phản hồi đúng. Kiểm tra lại Apps Script đã triển khai phiên bản mới.");
+    }
+    if (!result.ok) throw new Error(result.message || "Có lỗi xảy ra.");
+  } catch (e) {
+    const isNetwork = e instanceof TypeError; // fetch lỗi mạng
+    err.textContent = isNetwork
+      ? "Không kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại."
+      : e.message;
+    spinning = false;
+    // Trùng SĐT thì khóa luôn, các lỗi khác cho thử lại
+    btn.disabled = /tham gia/.test(e.message);
+    if (btn.disabled) localStorage.setItem(LOCAL_KEY + phone, "1");
+    return;
+  }
+
+  // Quay đến đúng ô server đã chọn
+  const idx = result.index;
+  const targetMod = (3 * Math.PI / 2 - (idx + 0.5) * SEG) % (2 * Math.PI);
+  const fromAngle = currentAngle;
+  const toAngle = fromAngle + 6 * 2 * Math.PI +
+    ((((targetMod - fromAngle) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI));
+  const duration = 4500;
+  const startTime = performance.now();
+
+  function frame(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    currentAngle = fromAngle + (toAngle - fromAngle) * easeOutCubic(t);
+    drawWheel();
+    if (t < 1) requestAnimationFrame(frame);
+    else finishSpin(result.prize, phone);
+  }
+  requestAnimationFrame(frame);
+}
+
+function finishSpin(prize, phone) {
+  spinning = false;
+  hasSpun = true;
+  localStorage.setItem(LOCAL_KEY + phone, "1");
+  document.getElementById("prizeText").textContent = prize;
+  document.getElementById("modal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("show");
+}
+
+drawWheel();
+</script>
 </body>
 </html>
