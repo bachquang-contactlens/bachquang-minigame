@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2299.77">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="vi"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</p>
+<p class="p1">&lt;title&gt;Bach Quang MiniGame&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>:root { --green:#00A651; --green-dark:#008a43; --green-light:#e6f7ee; --text:#1f2937; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>* { box-sizing: border-box; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin:0; font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: linear-gradient(180deg,#ffffff 0%,var(--green-light) 100%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color:var(--text); min-height:100vh; display:flex; justify-content:center; padding:20px 16px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.card {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:#fff; border-radius:20px; padding:28px 22px; width:100%; max-width:440px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow:0 10px 30px rgba(0,166,81,.12); text-align:center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>header img { height:70px; max-width:85%; object-fit:contain; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.brand-fallback { display:none; font-weight:800; color:var(--green); font-size:22px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.step-label { font-size:12px; letter-spacing:2px; color:#6b7280; margin:14px 0 4px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>h1 { color:var(--green); font-size:26px; margin:6px 0 4px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sub { color:#4b5563; font-size:15px; margin:0 0 18px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.screen { display:none; text-align:left; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.screen.active { display:block; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>label.field-label { display:block; font-weight:700; margin:14px 0 6px; font-size:15px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>label.field-label span { color:#dc2626; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input[type=text], input[type=tel] {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width:100%; padding:12px 14px; border:1px solid #d1d5db; border-radius:10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size:16px; background:#fafafa;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input:focus { outline:none; border-color:var(--green); background:#fff; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>fieldset { border:1px solid #d1fae5; border-radius:12px; padding:12px 14px; margin:14px 0; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>legend { font-weight:700; padding:0 6px; color:var(--green-dark); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.opt { display:flex; align-items:center; gap:10px; padding:8px 4px; font-size:15px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.opt input { width:18px; height:18px; accent-color:var(--green); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.q-block { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; margin-bottom:14px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.q-block h3 { font-size:15px; margin:0 0 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.other-input { margin-top:8px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.err { color:#dc2626; font-size:14px; margin:10px 0; min-height:18px; text-align:center; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display:block; width:100%; margin-top:16px; padding:14px; border:none; border-radius:999px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:var(--green); color:#fff; font-size:17px; font-weight:700; cursor:pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow:0 6px 16px rgba(0,166,81,.3);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn:hover:not(:disabled) { background:var(--green-dark); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn:disabled { background:#9ca3af; box-shadow:none; cursor:not-allowed; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-back { background:none; color:#6b7280; box-shadow:none; font-size:14px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.wheel-wrap { position:relative; width:min(88vw,340px); aspect-ratio:1; margin:12px auto 0; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas { width:100%; height:100%; border-radius:50%; box-shadow:0 12px 30px rgba(0,166,81,.25); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pointer {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>position:absolute; top:-12px; left:50%; transform:translateX(-50%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-top:28px solid var(--green-dark); z-index:2;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-spin { max-width:320px; margin-left:auto; margin-right:auto; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.note { font-size:13px; color:#6b7280; text-align:center; margin-top:14px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; padding:16px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modal.show { display:flex; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modal-card { background:#fff; border-radius:20px; padding:28px 24px; text-align:center; max-width:340px; width:100%; border-top:6px solid var(--green); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modal-card h2 { color:var(--green); margin:0 0 8px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modal-card .prize { font-size:22px; font-weight:700; margin:8px 0 16px; }</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1">&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;img src="logo-bachquang.png" alt="Bach Quang"</p>
+<p class="p1"><span class="Apple-converted-space">         </span>onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="brand-fallback"&gt;Bach Quang Co., Ltd&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="step-label" id="stepLabel"&gt;BƯỚC 01 / 03&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- BƯỚC 1: THÔNG TIN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section class="screen active" id="step1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Bach Quang MiniGame&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="sub"&gt;Quý Bác Sĩ vui lòng điền thông tin để bắt đầu tham gia chương trình.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label class="field-label"&gt;Họ và tên &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="text" id="fullname" placeholder="Nhập họ và tên"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label class="field-label"&gt;Số điện thoại &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="tel" id="phone" placeholder="Nhập số điện thoại"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label class="field-label"&gt;Bệnh viện / Phòng khám &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="text" id="clinic" placeholder="Nhập tên bệnh viện / phòng khám"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;fieldset&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;legend&gt;Chuyên khoa *&lt;/legend&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Phaco"&gt; Phaco&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Glaucoma"&gt; Glaucoma&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Võng mạc"&gt; Võng mạc&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Giác mạc"&gt; Giác mạc&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label class="opt"&gt;&lt;input type="checkbox" name="specialty" value="Khác"&gt; Khác&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" id="specialtyOther" class="other-input" placeholder="Chuyên khoa khác (nếu có)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/fieldset&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="err" id="err1"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" onclick="goStep2()"&gt;TIẾP THEO →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- BƯỚC 2: KHẢO SÁT --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section class="screen" id="step2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Bach Quang MiniGame&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="sub"&gt;Kính mời Quý Bác Sĩ / Quý Bệnh Viện chọn các nội dung phù hợp. Có thể chọn nhiều đáp án trong mỗi câu.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="q-block"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;1a. Quý Bác Sĩ / Quý Bệnh Viện quan tâm đến dòng thủy tinh thể nhân tạo nào? — Loại thấu kính *&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid2" data-q="q1a"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Đơn tiêu"&gt; Đơn tiêu&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="EDOF (Kéo dài tiêu cự)"&gt; EDOF (Kéo dài tiêu cự)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Đa tiêu"&gt; Đa tiêu&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Ba tiêu cự"&gt; Ba tiêu cự&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" class="other-input" data-other="q1a" placeholder="Nhu cầu / nội dung khác (nếu có)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="q-block"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;1b. Chất liệu *&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid2" data-q="q1b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Kỵ nước"&gt; Kỵ nước&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Ngậm nước"&gt; Ngậm nước&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="Kỵ nước kết hợp ngậm nước"&gt; Kỵ nước kết hợp ngậm nước&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="opt"&gt;&lt;input type="checkbox" value="IOL 3 mảnh"&gt; IOL 3 mảnh&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" class="other-input" data-other="q1b"</p>
+</body>
+</html>
