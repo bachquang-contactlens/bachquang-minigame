@@ -99,7 +99,7 @@
     </fieldset>
 
     <div class="err" id="err1"></div>
-    <button class="btn" onclick="goStep2()">TIẾP THEO →</button>
+    <button class="btn" id="btnStep1" onclick="goStep2()">TIẾP THEO →</button>
   </section>
 
   <!-- BƯỚC 2: KHẢO SÁT -->
@@ -191,7 +191,7 @@
     </div>
 
     <div class="err" id="err2"></div>
-    <button class="btn" onclick="goStep3()">LƯU & TIẾP TỤC →</button>
+    <button class="btn" id="btnStep2" onclick="goStep3()">LƯU & TIẾP TỤC →</button>
     <button class="btn btn-back" onclick="showStep(1)">← Quay lại</button>
   </section>
 
@@ -203,7 +203,6 @@
       <canvas id="wheel" width="700" height="700"></canvas>
     </div>
     <button class="btn btn-spin" id="spin" onclick="spin()">QUAY NGAY ✦</button>
-    <div class="err" id="err3"></div>
   </section>
 </div>
 
@@ -218,20 +217,12 @@
 
 <script>
 // ===== CẤU HÌNH =====
-// URL Apps Script (phải khớp với code và đã triển khai phiên bản mới nhất)
 const API_URL = "https://script.google.com/macros/s/AKfycbw1zeUZSz4b3wH37p2p6o6cpqT7aecJtQ8BiA7uRmDJEizAOWcS3Fakvj4avUugMpWwZw/exec";
-const LOCAL_KEY = "bq_spun_";  // đánh dấu trên thiết bị, lớp chặn phụ (server vẫn là chốt chính)
 
-// 8 ô: xen kẽ túi và bình. Tên phải khớp PRIZES trong Apps Script.
+// 8 ô: xen kẽ túi và bình (chỉ để vẽ, kết quả thật do server chọn)
 const PRIZES = [
-  { name: "Túi quà Bách Quang",  icon: "bag" },
-  { name: "Bình nước Bách Quang", icon: "bottle" },
-  { name: "Túi quà Bách Quang",  icon: "bag" },
-  { name: "Bình nước Bách Quang", icon: "bottle" },
-  { name: "Túi quà Bách Quang",  icon: "bag" },
-  { name: "Bình nước Bách Quang", icon: "bottle" },
-  { name: "Túi quà Bách Quang",  icon: "bag" },
-  { name: "Bình nước Bách Quang", icon: "bottle" },
+  { icon: "bag" }, { icon: "bottle" }, { icon: "bag" }, { icon: "bottle" },
+  { icon: "bag" }, { icon: "bottle" }, { icon: "bag" }, { icon: "bottle" },
 ];
 const GREEN = "#00A651";
 const WHITE = "#ffffff";
@@ -239,60 +230,111 @@ const N = PRIZES.length;
 const SEG = (2 * Math.PI) / N;
 
 let userData = {};
+let result = null;     // kết quả server trả về sau bước 2: { index, prize }
 let spinning = false;
-let hasSpun = false;
 
-// ===== ĐIỀU HƯỚNG =====
+// ===== TIỆN ÍCH =====
 function showStep(n) {
   ["step1","step2","step3"].forEach((id, i) =>
     document.getElementById(id).classList.toggle("active", i === n - 1));
   window.scrollTo(0, 0);
 }
 
-// Chuẩn hóa SĐT: chỉ giữ số, đổi đầu 84 thành 0
 function normPhone(raw) {
   let p = String(raw || "").replace(/\D/g, "");
   if (p.startsWith("84") && p.length >= 11) p = "0" + p.slice(2);
   return p;
 }
 
-function goStep2() {
+async function callApi(payload) {
+  let res;
+  try {
+    res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+    });
+  } catch (e) {
+    throw new Error("Không kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại.");
+  }
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    throw new Error("Máy chủ chưa phản hồi đúng. Kiểm tra lại Apps Script đã triển khai phiên bản mới.");
+  }
+  if (!data.ok) throw new Error(data.message || "Có lỗi xảy ra.");
+  return data;
+}
+
+function setBusy(btn, busy, busyText, normalText) {
+  btn.disabled = busy;
+  btn.textContent = busy ? busyText : normalText;
+}
+
+// ===== BƯỚC 1 → 2: kiểm tra SĐT trùng =====
+async function goStep2() {
+  const err = document.getElementById("err1");
+  const btn = document.getElementById("btnStep1");
   const name = document.getElementById("fullname").value.trim();
   const phone = normPhone(document.getElementById("phone").value);
   const clinic = document.getElementById("clinic").value.trim();
   const specs = [...document.querySelectorAll('input[name="specialty"]:checked')].map(c => c.value);
   const other = document.getElementById("specialtyOther").value.trim();
-  const err = document.getElementById("err1");
 
+  err.textContent = "";
   if (!name || !phone || !clinic) { err.textContent = "Vui lòng nhập đầy đủ các mục có dấu *."; return; }
   if (!/^0\d{8,10}$/.test(phone)) { err.textContent = "Số điện thoại phải bắt đầu bằng 0, gồm 9 đến 11 số."; return; }
   if (specs.length === 0 && !other) { err.textContent = "Vui lòng chọn ít nhất một chuyên khoa."; return; }
-  err.textContent = "";
 
-  userData = { name, phone, clinic, specialty: specs.join(", "), specialtyOther: other };
-  showStep(2);
+  setBusy(btn, true, "ĐANG KIỂM TRA...", "TIẾP THEO →");
+  try {
+    await callApi({ action: "check", phone });
+    userData = { name, phone, clinic, specialty: specs.join(", "), specialtyOther: other };
+    showStep(2);
+  } catch (e) {
+    err.textContent = e.message;
+  } finally {
+    setBusy(btn, false, "", "TIẾP THEO →");
+  }
 }
 
+// ===== BƯỚC 2 → 3: lưu khảo sát và chọn quà trên server =====
 function collectSurvey() {
-  const result = {};
-  document.querySelectorAll("[data-q]").forEach(group => {
-    result[group.dataset.q] = [...group.querySelectorAll("input:checked")].map(c => c.value).join(", ");
+  const r = {};
+  document.querySelectorAll("[data-q]").forEach(g => {
+    r[g.dataset.q] = [...g.querySelectorAll("input:checked")].map(c => c.value).join(", ");
   });
-  document.querySelectorAll("[data-other]").forEach(input => {
-    result[input.dataset.other + "_khac"] = input.value.trim();
+  document.querySelectorAll("[data-other]").forEach(i => {
+    r[i.dataset.other + "_khac"] = i.value.trim();
   });
-  return result;
+  return r;
 }
 
-function goStep3() {
+async function goStep3() {
   const err = document.getElementById("err2");
+  const btn = document.getElementById("btnStep2");
   const survey = collectSurvey();
   const required = ["q1a","q1b","q2","q3","q4","q5a","q5b"];
-  if (required.some(k => !survey[k])) { err.textContent = "Vui lòng trả lời đầy đủ các câu hỏi có dấu *."; return; }
+
   err.textContent = "";
+  if (required.some(k => !survey[k])) { err.textContent = "Vui lòng trả lời đầy đủ các câu hỏi có dấu *."; return; }
+
   userData = { ...userData, ...survey };
-  showStep(3);
-  drawWheel();
+  setBusy(btn, true, "ĐANG LƯU...", "LƯU & TIẾP TỤC →");
+  try {
+    result = await callApi({
+      action: "save",
+      ...userData,
+      time: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }),
+    });
+    showStep(3);
+    drawWheel();
+  } catch (e) {
+    err.textContent = e.message;
+  } finally {
+    setBusy(btn, false, "", "LƯU & TIẾP TỤC →");
+  }
 }
 
 // ===== VẼ VÒNG QUAY =====
@@ -311,7 +353,6 @@ function rr(x, y, w, h, r) {
   ctx.closePath();
 }
 
-// Icon túi quà: vẽ quanh gốc (0,0), không xoay
 function drawBag(s, color) {
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
@@ -323,15 +364,11 @@ function drawBag(s, color) {
   ctx.fill();
 }
 
-// Icon bình nước: vẽ quanh gốc (0,0), không xoay
 function drawBottle(s, color) {
   ctx.fillStyle = color;
-  rr(-s * 0.15, -s * 0.46, s * 0.3, s * 0.14, s * 0.04); // nắp
-  ctx.fill();
-  rr(-s * 0.28, -s * 0.34, s * 0.56, s * 0.2, s * 0.06); // cổ
-  ctx.fill();
-  rr(-s * 0.36, -s * 0.16, s * 0.72, s * 0.8, s * 0.18);  // thân
-  ctx.fill();
+  rr(-s * 0.15, -s * 0.46, s * 0.3, s * 0.14, s * 0.04); ctx.fill();
+  rr(-s * 0.28, -s * 0.34, s * 0.56, s * 0.2, s * 0.06); ctx.fill();
+  rr(-s * 0.36, -s * 0.16, s * 0.72, s * 0.8, s * 0.18); ctx.fill();
 }
 
 function drawWheel() {
@@ -341,7 +378,6 @@ function drawWheel() {
     const end = start + SEG;
     const isGreen = i % 2 === 0;
 
-    // Ô
     ctx.beginPath();
     ctx.moveTo(CX, CY);
     ctx.arc(CX, CY, R, start, end);
@@ -352,12 +388,9 @@ function drawWheel() {
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Icon (đặt ở giữa ô, không xoay theo vòng quay)
     const mid = start + SEG / 2;
-    const ix = CX + Math.cos(mid) * R * 0.6;
-    const iy = CY + Math.sin(mid) * R * 0.6;
     ctx.save();
-    ctx.translate(ix, iy);
+    ctx.translate(CX + Math.cos(mid) * R * 0.6, CY + Math.sin(mid) * R * 0.6);
     const iconColor = isGreen ? WHITE : GREEN;
     if (PRIZES[i].icon === "bag") drawBag(105, iconColor);
     else drawBottle(105, iconColor);
@@ -365,63 +398,21 @@ function drawWheel() {
   }
 }
 
-// ===== QUAY =====
+// ===== QUAY (không gọi server, chạy ngay) =====
 function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
-async function spin() {
-  if (spinning || hasSpun) return;
-  const err = document.getElementById("err3");
-  const btn = document.getElementById("spin");
-  err.textContent = "";
-
-  const phone = userData.phone;
-  // Lớp chặn trên thiết bị (tránh gửi lại khi tải lại trang)
-  if (localStorage.getItem(LOCAL_KEY + phone)) {
-    err.textContent = "Số điện thoại này chỉ được tham gia 1 lần.";
-    btn.disabled = true;
-    return;
-  }
-
+function spin() {
+  if (spinning || !result) return;
   spinning = true;
+  const btn = document.getElementById("spin");
   btn.disabled = true;
 
-  // Server kiểm tra trùng SĐT, chọn quà và ghi vào Sheet trong một bước
-  let result;
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({
-        action: "spin",
-        ...userData,
-        time: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }),
-      }),
-    });
-    try {
-      result = await res.json();
-    } catch (parseErr) {
-      throw new Error("Máy chủ chưa phản hồi đúng. Kiểm tra lại Apps Script đã triển khai phiên bản mới.");
-    }
-    if (!result.ok) throw new Error(result.message || "Có lỗi xảy ra.");
-  } catch (e) {
-    const isNetwork = e instanceof TypeError; // fetch lỗi mạng
-    err.textContent = isNetwork
-      ? "Không kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại."
-      : e.message;
-    spinning = false;
-    // Trùng SĐT thì khóa luôn, các lỗi khác cho thử lại
-    btn.disabled = /tham gia/.test(e.message);
-    if (btn.disabled) localStorage.setItem(LOCAL_KEY + phone, "1");
-    return;
-  }
-
-  // Quay đến đúng ô server đã chọn
   const idx = result.index;
   const targetMod = (3 * Math.PI / 2 - (idx + 0.5) * SEG) % (2 * Math.PI);
   const fromAngle = currentAngle;
   const toAngle = fromAngle + 6 * 2 * Math.PI +
     ((((targetMod - fromAngle) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI));
-  const duration = 4500;
+  const duration = 4000;
   const startTime = performance.now();
 
   function frame(now) {
@@ -429,15 +420,13 @@ async function spin() {
     currentAngle = fromAngle + (toAngle - fromAngle) * easeOutCubic(t);
     drawWheel();
     if (t < 1) requestAnimationFrame(frame);
-    else finishSpin(result.prize, phone);
+    else finishSpin(result.prize);
   }
   requestAnimationFrame(frame);
 }
 
-function finishSpin(prize, phone) {
+function finishSpin(prize) {
   spinning = false;
-  hasSpun = true;
-  localStorage.setItem(LOCAL_KEY + phone, "1");
   document.getElementById("prizeText").textContent = prize;
   document.getElementById("modal").classList.add("show");
 }
@@ -445,8 +434,6 @@ function finishSpin(prize, phone) {
 function closeModal() {
   document.getElementById("modal").classList.remove("show");
 }
-
-drawWheel();
 </script>
 </body>
 </html>
